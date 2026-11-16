@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SINC communicatietoolkit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#0096FF;--green:#2ACE7B;--yellow:#FCD731;--purple:#AB68F8;--black:#1D1D1D;--paper:#F4F3EB;--line:#d9d7c8;--mute:#55554f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--black);font:400 1rem/1.6 "Bricolage Grotesque",system-ui,sans-serif}
+header{background:var(--black);color:#fff;padding:4rem 1.5rem 3rem}
+.wrap{max-width:68rem;margin:auto}
+h1{font-size:clamp(2.4rem,7vw,4.5rem);line-height:1;margin:0 0 1rem;font-weight:800;letter-spacing:-.03em}
+header p{max-width:36rem;margin:0;color:#d8d8d2;font-size:1.1rem}
+.logo{height:3.5rem;width:auto;display:block;margin:0 0 1.5rem auto}
+.strip{display:flex;height:.6rem}.strip i{flex:1}
+.essentials{background:var(--yellow);padding:2rem 1.5rem}
+.essentials h2{margin:0 0 1rem}
+.essentials dl{display:grid;gap:1.25rem;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));margin:0}
+.essentials dt{font-weight:800;font-size:.85rem;text-transform:uppercase;letter-spacing:.06em}
+.essentials dd{margin:.2rem 0 0;font-size:1.1rem}
+.essentials .btn.ghost{background:transparent;color:var(--black)}
+.essentials .btn{background:var(--black);border-color:var(--black);color:#fff;text-decoration:none;display:inline-block;margin-top:.2rem}
+nav{position:sticky;top:0;background:var(--paper);border-bottom:1px solid var(--line);z-index:5}
+nav .wrap{padding:.75rem 1.5rem;display:flex;gap:.5rem;overflow-x:auto}
+nav button{font:inherit;font-weight:600;border:2px solid var(--black);background:transparent;color:var(--black);padding:.35rem 1rem;border-radius:99px;cursor:pointer;white-space:nowrap}
+nav button[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+main{padding:2.5rem 1.5rem 5rem}
+section{margin-bottom:3.5rem}
+h2{font-size:1.7rem;margin:0 0 .25rem;letter-spacing:-.01em}
+h2+p{color:var(--mute);margin:0 0 1.25rem}
+.grid{display:grid;gap:1rem;align-items:start}
+.texts{grid-template-columns:repeat(auto-fill,minmax(21rem,1fr))}
+.visuals{grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));margin-top:1.5rem}
+.card{background:#fff;border:1px solid var(--line);border-radius:.9rem;padding:1.25rem;display:flex;flex-direction:column;gap:.75rem}
+.texts .card{border-left:8px solid var(--c)}
+.card h3{margin:0;font-size:1.05rem}
+.card pre{margin:0;white-space:pre-wrap;font:inherit;color:var(--mute)}
+.visuals .card{padding:.75rem}
+.visuals img{width:100%;height:auto;border-radius:.5rem;display:block}.note{margin:0;color:var(--mute)}.miss{margin:0;padding:2rem 1rem;background:var(--paper);border-radius:.5rem;color:var(--mute);font-size:.9rem}
+footer a{color:var(--black)}
+label{display:block;font-size:.85rem;font-weight:600}
+input{width:100%;font:inherit;font-size:.9rem;padding:.35rem .6rem;margin-top:.15rem;border:1px solid var(--line);border-radius:.4rem;background:var(--paper);color:var(--black)}
+.row{display:flex;gap:.5rem;flex-wrap:wrap}
+.btn{font:inherit;font-weight:600;font-size:.9rem;border:2px solid var(--blue);background:var(--blue);color:#fff;padding:.35rem .9rem;border-radius:.5rem;cursor:pointer;align-self:flex-start}
+.btn.ghost{background:transparent;color:var(--black);border-color:var(--black)}
+.btn:focus-visible,nav button:focus-visible,input:focus-visible{outline:3px solid var(--purple);outline-offset:2px}
+#toast{position:fixed;left:50%;bottom:1.5rem;transform:translateX(-50%) translateY(150%);background:var(--black);color:#fff;padding:.6rem 1.1rem;border-radius:.6rem;font-weight:600;transition:transform .2s}
+#toast.on{transform:translateX(-50%)}
+footer{text-align:center;color:var(--mute);padding:2rem;border-top:1px solid var(--line);font-size:.9rem}
+@media (prefers-reduced-motion:reduce){#toast{transition:none}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <img class="logo" src="images/sinc-logo.png" alt="SINC">
+  <h1>Communicatietoolkit</h1>
+  <p>Kopieer de teksten, pas de beelden aan en download ze. Alles is klaar om te delen op je eigen kanalen.</p>
+</div></header>
+<div class="strip" aria-hidden="true"><i style="background:#0096FF"></i><i style="background:#2ACE7B"></i><i style="background:#FCD731"></i><i style="background:#AB68F8"></i></div>
+<section class="essentials" aria-labelledby="ess"><div class="wrap">
+  <h2 id="ess">De essentials</h2>
+  <dl>
+    <div><dt>Datum en uur</dt><dd>Woensdag 2 december<br>Deuren open om 18:00. Programma van 18:30 tot 22:30.</dd></div>
+    <div><dt>Locatie</dt><dd>Trix<br>Noordersingel 28/30, 2140 Antwerpen</dd></div>
+    <div><dt>Inschrijven</dt><dd><div class="row"><a class="btn" href="https://luma.com/tawkiuhl">Schrijf je in via Luma</a><button class="btn ghost" id="copylink" type="button">Kopieer link</button></div></dd></div>
+  </dl>
+</div></section>
+<nav><div class="wrap" id="tabs"></div></nav>
+<main><div class="wrap" id="main"></div></main>
+<footer><strong>Vragen?</strong> Contacteer [naam] via <a href="mailto:[e-mailadres]">[e-mailadres]</a>.</footer>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============ PAS HIER JE INHOUD AAN ============
+   Tekst tussen [haakjes] vervang je door de echte info.
+   Kleuren: blauw #0096FF, groen #2ACE7B, geel #FCD731, paars #AB68F8, zwart #1D1D1D */
+const BRAND = {
+  blue:  {bg:"#0096FF", fg:"#FFFFFF"},
+  green: {bg:"#2ACE7B", fg:"#1D1D1D"},
+  yellow:{bg:"#FCD731", fg:"#1D1D1D"},
+  purple:{bg:"#AB68F8", fg:"#FFFFFF"},
+  black: {bg:"#1D1D1D", fg:"#FFFFFF"}
+};
+
+const TEXTS = [
+  { cat:"Social media", desc:"Berichten voor je eigen kanalen, klaar om te plakken.", items:[
+    { title:"Aankondiging van het evenement", color:"yellow", text:"Het is bijna zover: [eventnaam] komt eraan!\n\nOp [datum] om [uur] verwelkomen we je bij [locatie]. Ontmoet [sprekers/partners], ontdek wat studenten bouwen en leg connecties die langer duren dan één avond.\n\nSchrijf je in via [link].\n\n#SINC #[hashtag]" },
+    { title:"Oproep om te delen en te komen", color:"purple", text:"Kom jij ook naar [eventnaam]?\n\nOp [datum] brengt SINC studenten, docenten en partners samen bij [locatie]. Schrijf je in via [link] en tag de persoon met wie je wilt komen.\n\nKen je iemand die hier niet mag ontbreken? Deel dit bericht en neem hem of haar mee.\n\n#SINC #[hashtag]" }
+  ]},
+  { cat:"E-mail", desc:"Voor interne en studentencommunicatie.", items:[
+    { title:"Uitnodiging met oproep om intern te communiceren via het intranet", color:"blue", text:"Onderwerp: Kom naar [eventnaam] op [datum] en help ons de boodschap verspreiden\n\nBeste collega's,\n\nOp [datum] om [uur] organiseert SINC [eventnaam] bij [locatie]. Je bent van harte welkom. Inschrijven kan tot [deadline] via [link].\n\nWe vragen jullie ook om het evenement mee bekend te maken:\n- Plaats het bericht op het intranet via [link naar intranetpagina].\n- Deel het met je team en met studenten die je kent.\n- Gebruik het materiaal uit de toolkit: [toolkit-link].\n\nBedankt voor je hulp!\n\n[naam]\n[functie], SINC" },
+    { title:"Mail aan studenten (eigen communicatie)", color:"green", text:"Onderwerp: Jij bent uitgenodigd voor [eventnaam] op [datum]\n\nHoi [voornaam],\n\nOp [datum] om [uur] organiseren we [eventnaam] bij [locatie]. Kom langs om [wat studenten daar kunnen doen of leren] en ontmoet andere studenten, docenten en partners.\n\nSchrijf je in via [link]. Deelname is [gratis/prijs].\n\nTot dan!\n\n[naam]\nSINC" }
+  ]}
+];
+
+/* Zet je eigen beelden in de map "images" met exact deze bestandsnamen. */
+const VISUALS = [
+  { cat:"Social media", desc:"Klaar voor gebruik. Download het beeld en plaats het op je eigen kanalen.", items:[
+    { title:"Vierkante post 1", src:"images/post-1.png" },
+    { title:"Vierkante post 2", src:"images/post-2.png" },
+    { title:"Story 1", src:"images/story-1.png" },
+    { title:"Story 3", src:"images/story-3.png", text:"Voorbeeldzin: Kom langs op [datum] en ontdek [eventnaam]. Vragen? Mail [naam] via [e-mailadres]." }
+  ]}
+];
+/* ============ EINDE AANPASSEN ============ */
+
+const $ = s => document.querySelector(s);
+const FONT = '"Bricolage Grotesque",system-ui,sans-serif';
+const toast = m => { const t=$("#toast"); t.textContent=m; t.classList.add("on"); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove("on"),1800); };
+
+async function copyText(text){
+  try{ await navigator.clipboard.writeText(text); }
+  catch{ const a=document.createElement("textarea"); a.value=text; document.body.appendChild(a); a.select(); document.execCommand("copy"); a.remove(); }
+  toast("Tekst gekopieerd");
+}
+
+async function download(v){ const a=document.createElement("a"); a.href=v.src; a.download=v.src.split("/").pop(); document.body.append(a); a.click(); a.remove(); toast("Beeld gedownload"); }
+const el=(t,cls,txt)=>{const e=document.createElement(t); if(cls)e.className=cls; if(txt)e.textContent=txt; return e;};
+const btn=(l,fn,ghost)=>{const b=el("button","btn"+(ghost?" ghost":""),l); b.onclick=fn; return b;};
+let redraws=[];
+
+function render(filter){
+  const main=$("#main"); main.innerHTML=""; redraws=[];
+  const cats=[...new Set([...TEXTS,...VISUALS].map(g=>g.cat))];
+  cats.filter(c=>filter==="Alles"||filter===c).forEach(cat=>{
+    const t=TEXTS.find(g=>g.cat===cat), v=VISUALS.find(g=>g.cat===cat), s=el("section");
+    s.append(el("h2","",cat),el("p","",(t||v).desc));
+    if(t){ const g=el("div","grid texts");
+      t.items.forEach(i=>{ const c=el("article","card"); c.style.setProperty("--c",BRAND[i.color].bg);
+        c.append(el("h3","",i.title),el("pre","",i.text),btn("Kopieer tekst",()=>copyText(i.text))); g.append(c); });
+      s.append(g); }
+    if(v){ const g=el("div","grid visuals");
+      v.items.forEach(i=>{ const c=el("article","card"), img=el("img"); img.alt=i.title; img.src=i.src; img.loading="lazy";
+        const miss=el("p","miss",`Beeld ontbreekt. Upload ${i.src} in je repository.`); miss.hidden=true;
+        img.onerror=()=>{img.hidden=true;miss.hidden=false;};
+        c.append(img,miss,el("strong","",i.title));
+        if(i.text) c.append(el("p","note",i.text)); else c.append(btn("Download",()=>download(i)));
+        g.append(c); });
+      s.append(g); }
+    main.append(s);
+  });
+}
+
+["Alles",...new Set([...TEXTS,...VISUALS].map(g=>g.cat))].forEach((c,n)=>{
+  const b=el("button","",c); b.setAttribute("aria-pressed",n===0);
+  b.onclick=()=>{ document.querySelectorAll("#tabs button").forEach(x=>x.setAttribute("aria-pressed",x===b)); render(c); };
+  $("#tabs").append(b); });
+render("Alles");
+$("#copylink").onclick=()=>copyText("https://luma.com/tawkiuhl").then(()=>toast("Link gekopieerd"));
+</script>
+</body>
+</html>
