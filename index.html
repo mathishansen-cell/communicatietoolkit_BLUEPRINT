@@ -109,7 +109,7 @@ var BRAND={blue:"#0096FF",green:"#2ACE7B",yellow:"#FCD731",purple:"#AB68F8",blac
 var BRAND_NL={blue:"blauw",green:"groen",yellow:"geel",purple:"paars",black:"zwart"};
 var STATE_TEXT=document.getElementById("state").textContent;
 var S=JSON.parse(STATE_TEXT), SAVED=JSON.stringify(S);
-var editing=false, dirty=false, busy=false, readOnly=false, filter="Alles", cancelArmed=false;
+var editing=false, dirty=false, busy=false, readOnly=false, filter="All", cancelArmed=false;
 var hasRuntime=!!(window.claude&&window.claude.use);
 var canEditPage=false, art=null, assets=null, dl=null;
 
@@ -154,7 +154,7 @@ function tools(arr,i,label,same){
 async function copyText(text,msg){
   try{ await navigator.clipboard.writeText(text); }
   catch(e){ var a=document.createElement("textarea"); a.value=text; document.body.appendChild(a); a.select(); try{document.execCommand("copy");}catch(x){} a.remove(); }
-  toast(msg||"Tekst gekopieerd");
+  toast(msg||"Text copied");
 }
 
 /* images: uploaded to the artifact's asset store, or shrunk to an embedded image */
@@ -180,9 +180,9 @@ async function download(b){
     var blob=await (await fetch(b.src)).blob();
     var ext=((blob.type.split("/")[1])||"png").replace("jpeg","jpg").replace("svg+xml","svg");
     var name=base+"."+ext;
-    if(dl){ await dl.save({filename:name,data:blob}); toast("Beeld gedownload"); }
-    else { var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.append(a); a.click(); a.remove(); toast("Beeld gedownload"); }
-  }catch(e){ if(e&&e.code&&e.code!=="unavailable") return; toast("Downloaden lukte niet hier. Klik met rechts op het beeld om het te bewaren."); }
+    if(dl){ await dl.save({filename:name,data:blob}); toast("Image downloaded"); }
+    else { var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.append(a); a.click(); a.remove(); toast("Image downloaded"); }
+  }catch(e){ if(e&&e.code&&e.code!=="unavailable") return; toast("Download didn't work here. Right-click the image to save it."); }
 }
 
 /* ---------- page parts ---------- */
@@ -210,7 +210,7 @@ function essentialsEl(){
         var lab=el("label","url-field","Link"), inp=el("input"); inp.type="url"; inp.value=it.url; inp.id="url-"+i; inp.oninput=function(){it.url=inp.value.trim(); markDirty();}; lab.append(inp); d.append(lab);
       } else {
         var r=el("div","row"), a=el("a","btn dark",it.text||"Open link"); a.href=it.url; a.target="_blank"; a.rel="noopener";
-        r.append(a, btn("Kopieer link",function(){copyText(it.url,"Link gekopieerd");},"ghost dark")); d.append(r);
+        r.append(a, btn("Copy link",function(){copyText(it.url,"Link copied");},"ghost dark")); d.append(r);
       }
     } else d.append(ed("div","ess-text",it,"text",{ph:"Info"}));
     g.append(d);
@@ -222,9 +222,9 @@ function essentialsEl(){
 function navEl(){
   var titles=[]; S.sections.forEach(function(s){ var t=(s.title||"").trim(); if(t&&titles.indexOf(t)<0) titles.push(t); });
   if(editing||titles.length<2) return document.createComment("");
-  if(filter!=="Alles"&&titles.indexOf(filter)<0) filter="Alles";
-  var n=el("nav"), w=el("div","wrap"); n.setAttribute("aria-label","Categorieën");
-  ["Alles"].concat(titles).forEach(function(t){ var b=el("button","",t); b.type="button"; b.setAttribute("aria-pressed",String(t===filter)); b.onclick=function(){filter=t; render();}; w.append(b); });
+  if(filter!=="All"&&titles.indexOf(filter)<0) filter="All";
+  var n=el("nav"), w=el("div","wrap"); n.setAttribute("aria-label","Categories");
+  ["All"].concat(titles).forEach(function(t){ var b=el("button","",t); b.type="button"; b.setAttribute("aria-pressed",String(t===filter)); b.onclick=function(){filter=t; render();}; w.append(b); });
   n.append(w); return n;
 }
 function swatches(b){
@@ -239,13 +239,13 @@ function textCard(sec,b){
   top.append(ed("h3","",b,"title",{single:1,ph:"Titel van het blok"}));
   if(editing) top.append(tools(sec.blocks,sec.blocks.indexOf(b),"tekstblok",isText));
   c.append(top, ed("div","card-text",b,"text",{ph:"Typ of plak hier de tekst"}));
-  c.append(editing?swatches(b):btn("Kopieer tekst",function(){copyText(b.text||"");}));
+  c.append(editing?swatches(b):btn("Copy text",function(){copyText(b.text||"");}));
   return c;
 }
 function imageCard(sec,b){
   var c=el("article","card");
   if(b.src){ var img=el("img"); img.src=b.src; img.alt=b.title||"Beeld"; img.loading="lazy"; c.append(img); }
-  else c.append(el("p","no-img",editing?"Nog geen beeld. Kies hieronder een bestand.":"Beeld volgt binnenkort."));
+  else c.append(el("p","no-img",editing?"Nog geen beeld. Kies hieronder een bestand.":"Image coming soon."));
   var top=el("div","card-top"); top.append(ed("div","img-title",b,"title",{single:1,ph:"Naam van het beeld"}));
   if(editing) top.append(tools(sec.blocks,sec.blocks.indexOf(b),"beeldblok",isImg));
   c.append(top, ed("p","note",b,"note",{ph:"Notitie of voorbeeldzin (optioneel)",optional:1}));
@@ -270,15 +270,15 @@ function sectionEl(sec,si){
 }
 function mainEl(){
   var m=el("main"), w=el("div","wrap");
-  S.sections.forEach(function(sec,i){ if(editing||filter==="Alles"||(sec.title||"").trim()===filter) w.append(sectionEl(sec,i)); });
+  S.sections.forEach(function(sec,i){ if(editing||filter==="All"||(sec.title||"").trim()===filter) w.append(sectionEl(sec,i)); });
   if(editing){ var b=el("button","new-section","+ Nieuwe sectie"); b.type="button"; b.onclick=function(){S.sections.push({id:uid(),title:"Nieuwe sectie",desc:"",imagesIntro:"",blocks:[{type:"text",title:"",color:"blue",text:""}]}); change(); setTimeout(function(){var h=document.querySelectorAll("section.block h2"); h=h[h.length-1]; if(h){h.scrollIntoView({block:"center"}); h.focus();}},50);}; w.append(b); }
-  else if(!S.sections.length) w.append(el("p","sec-desc","Nog geen inhoud."));
+  else if(!S.sections.length) w.append(el("p","sec-desc","No content yet."));
   m.append(w); return m;
 }
 function footerEl(){
   var F=S.footer, f=el("footer"), w=el("div","wrap");
   w.append(ed("strong","",F,"lead",{single:1,ph:"Vragen?",optional:1}), ed("span","",F,"text",{single:1,ph:"Contacteer [naam] via",optional:1}), ed("span","mail",F,"email",{single:1,ph:"e-mailadres",optional:1}));
-  if(!editing&&F.email&&F.email.indexOf("@")>0) w.append(btn("kopieer",function(){copyText(F.email,"E-mailadres gekopieerd");},"linkbtn"));
+  if(!editing&&F.email&&F.email.indexOf("@")>0) w.append(btn("copy",function(){copyText(F.email,"Email address copied");},"linkbtn"));
   w.querySelectorAll(".btn.linkbtn").forEach(function(b){b.className="linkbtn";});
   f.append(w); return f;
 }
